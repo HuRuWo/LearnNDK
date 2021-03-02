@@ -2,9 +2,7 @@
 #include <string>
 #include "md5.h"
 
-char *join3(char *, char *);
 
-#define PASS  "KSVR9bbYixtDU4PdjgaZ78OJMxZkPNXo7aDSPYeIYZA="
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_huruwo_ndk_1learn_MainActivity_stringFromJNI_13(
@@ -93,32 +91,24 @@ char * transformChar(unsigned char *arg) {
     return dest_str;
 }
 
+
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_huruwo_ndk_1learn_MainActivity_encryptMD5(
         JNIEnv* env,
-        jobject /* this */,jstring password) {
+        jobject /* this */,jstring str) {
 
 
-    //定义加密的字符串
-    char str[500];
-    strcpy(str, PASS);
-    //获取需要加密的字符串
-    char *c_str = (char *) (env)->GetStringUTFChars(password, JNI_FALSE);
-    strcat(str, c_str);
-    strcat(str, PASS);
     MD5_CTX md5;
     MD5Init(&md5);
-    //int i;
-    unsigned char encrypt[] = "admin";//21232f297a57a5a743894a0e4a801fc3
+    auto encrypt = env->GetStringUTFChars(str, JNI_FALSE);;//21232f297a57a5a743894a0e4a801fc3
     unsigned char decrypt[16];
     MD5Update(&md5, (unsigned char *) encrypt, strlen((char *) encrypt));
-
     MD5Final(&md5, decrypt);
     //定义需要返回的char*
     char *md5str;
     //将加密后的unsigned char数组转化为char* 返回
     md5str = transformChar(&decrypt[0]);
-    //free(md5str);
+    free(md5str);
     return env->NewStringUTF(md5str);
 
 
