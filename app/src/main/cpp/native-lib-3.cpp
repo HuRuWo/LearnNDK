@@ -4,7 +4,7 @@
 
 char *join3(char *, char *);
 
-#define MD5_KEY  "123456"
+#define PASS  "KSVR9bbYixtDU4PdjgaZ78OJMxZkPNXo7aDSPYeIYZA="
 
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_huruwo_ndk_1learn_MainActivity_stringFromJNI_13(
@@ -42,20 +42,87 @@ Java_com_huruwo_ndk_1learn_MainActivity_stringFromJNI_13(
     return (jstring)str4;
 }
 
+
+void setChar(int *arg1) {
+
+    switch (*arg1) {
+        case 10:
+            *arg1 = 97;
+            break;
+        case 11:
+            *arg1 = 98;
+            break;
+        case 12:
+            *arg1 = 99;
+            break;
+        case 13:
+            *arg1 = 100;
+            break;
+        case 14:
+            *arg1 = 101;
+            break;
+        case 15:
+            *arg1 = 102;
+            break;
+        default:
+            *arg1 = *arg1 + 48;
+            break;
+    }
+}
+
+char * transformChar(unsigned char *arg) {
+    char enstr[33];
+    char *dest_str;
+    for (int i = 0; i < 16; ++i) {
+        int c1 = arg[i] / 16;
+        setChar(&c1);
+        int c2 = arg[i] % 16;
+        setChar(&c2);
+        char c3 = c1;
+        char c4 = c2;
+        enstr[i * 2] = c3;
+        enstr[i * 2 + 1] = c4;
+    }
+    enstr[32] = '\0';
+    dest_str = (char *) calloc(sizeof(enstr), sizeof(char));
+    // dest_str = (char *)malloc(sizeof(char) * (sizeof(enstr)));
+
+    /* 为字符串分配堆空间 */
+    strncpy(dest_str, enstr, sizeof(enstr));
+    // 用C标准库函数strncpy拷贝字符
+    return dest_str;
+}
+
 extern "C" JNIEXPORT jstring JNICALL
 Java_com_huruwo_ndk_1learn_MainActivity_encryptMD5(
         JNIEnv* env,
-        jobject /* this */,jstring str) {
+        jobject /* this */,jstring password) {
 
 
-    const char *originStr;
-    //将jstring转化成char *类型
-    originStr = env->GetStringUTFChars(str, false);
-    MD5 md5 = MD5(originStr);
-    std::string md5Result = md5.hexdigest();
-    //将char *类型转化成jstring返回给Java层
-    return env->NewStringUTF(md5Result.c_str());
+    //定义加密的字符串
+    char str[500];
+    strcpy(str, PASS);
+    //获取需要加密的字符串
+    char *c_str = (char *) (env)->GetStringUTFChars(password, JNI_FALSE);
+    strcat(str, c_str);
+    strcat(str, PASS);
+    MD5_CTX md5;
+    MD5Init(&md5);
+    //int i;
+    unsigned char encrypt[] = "admin";//21232f297a57a5a743894a0e4a801fc3
+    unsigned char decrypt[16];
+    MD5Update(&md5, (unsigned char *) encrypt, strlen((char *) encrypt));
+
+    MD5Final(&md5, decrypt);
+    //定义需要返回的char*
+    char *md5str;
+    //将加密后的unsigned char数组转化为char* 返回
+    md5str = transformChar(&decrypt[0]);
+    //free(md5str);
+    return env->NewStringUTF(md5str);
 
 
 }
+
+
 
