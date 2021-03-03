@@ -100,7 +100,7 @@ Java_com_huruwo_ndk_1learn_MainActivity_encryptMD5(
 
     MD5_CTX md5;
     MD5Init(&md5);
-    auto encrypt = env->GetStringUTFChars(str, JNI_FALSE);;//21232f297a57a5a743894a0e4a801fc3
+    auto encrypt = env->GetStringUTFChars(str, JNI_FALSE);
     unsigned char decrypt[16];
     MD5Update(&md5, (unsigned char *) encrypt, strlen((char *) encrypt));
     MD5Final(&md5, decrypt);
