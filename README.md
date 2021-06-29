@@ -12,7 +12,7 @@
 
 1.AS 4.0 的NDK开发体验
 
-2.CMAKE的配置
+2.CMAKE的配置和讲解
 
 ### 3.NDK的基本使用
 
@@ -45,3 +45,6 @@
 9.native hook 相关信息
 
 
+## 参考资料
+
+https://developer.android.google.cn/ndk/guides/
